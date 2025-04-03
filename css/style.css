@@ -259,7 +259,7 @@ body {
   margin: 0 auto;
 }
 
-.container-type > button {
+.container-type > button, .btn-container > button {
   padding: 30px;
   border-radius: 12px;
   text-align: center;
@@ -276,12 +276,12 @@ body {
   border: none;
 }
 
-.container-type > button:hover {
+.container-type > button:hover,.btn-container  button:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.container-type > button i {
+.container-type > button i, .btn-container > button i {
   margin-right: 10px;
   font-size: 1.5rem;
 }
@@ -301,6 +301,34 @@ body {
   background: linear-gradient(135deg, #8e2de2, #4a00e0);
 }
 
+.btn-container{
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-container > div{
+  display: none;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+
+}
+
+.btn-container > div button{
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  background-color: #673ab7;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.btn-container > div button i{
+  margin-right: 10px;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {

@@ -26,18 +26,44 @@ if (!isset($_SESSION['user_id'])) {
        <?php include 'commun/header.php'; ?>
         <!-- Contenu -->
          <div class="container-type">
-            <button class="vehicule">
+            <button class="vehicule" onclick="window.location.href=''">
                  <i class="fas fa-car"></i> Assurance véhicule
             </button>
             <button class="habitation">
                  <i class="fas fa-home"></i> Assurance habitation
             </button>
-             <button class="individu">
-                 <i class="fas fa-user-shield"></i>  Assurance individu
-             </button>
-             <button class="finance">
-                  <i class="fas fa-chart-line"></i> Assurance finance
-             </button>
+            <div class="btn-container">
+                <button class="individu">
+                    <i class="fas fa-user-shield"></i>  Assurance individu
+                </button>
+                <div id="individu-options">
+                    <button class="vie">
+                        <i class="fas fa-heartbeat"></i> Vie
+                    </button>
+                    <button class="sante">
+                        <i class="fas fa-stethoscope"></i> Santé
+                    </button>
+                    <button class="scolarite">
+                        <i class="fas fa-graduation-cap"></i> Scolarité
+                    </button>
+                </div>
+            </div>
+            <div class="btn-container">
+                <button class="finance">
+                    <i class="fas fa-chart-line"></i> Assurance finance
+                </button>
+                <div id="finance-options">
+                    <button class="emprunt">
+                        <i class="fas fa-hand-holding-usd"></i> Emprunt
+                    </button>
+                    <button class="protection-juridique">
+                        <i class="fas fa-gavel"></i> Protection Juridique
+                    </button>
+                    <button class="cyberattaque">
+                        <i class="fas fa-shield-alt"></i> Cyberattaque
+                    </button>
+                </div>
+           </div>
          </div>
     <script src="js/script.js"></script> 
 </body>
