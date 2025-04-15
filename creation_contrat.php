@@ -26,7 +26,7 @@ if (!isset($_SESSION['user_id'])) {
        <?php include 'commun/header.php'; ?>
         <!-- Contenu -->
          <div class="container-type">
-            <button class="vehicule" onclick="window.location.href=''">
+            <button class="vehicule" onclick="window.location.href='formulaire_vehicule.php'">
                  <i class="fas fa-car"></i> Assurance véhicule
             </button>
             <button class="habitation">

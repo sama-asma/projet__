@@ -40,38 +40,47 @@ if (!isset($_SESSION['user_id'])) {
                 <p>Taux de satisfaction</p>
             </div>
         </div> -->
-
+        <?php 
+          require('db.php');
+          $stmt = $conn->prepare("SELECT * FROM contrats ORDER BY date_souscription DESC LIMIT 5;");
+          $stmt->execute();
+          $result = $stmt->get_result();
+          if($result->num_rows == 0){
+            echo "<p>Aucun contrat trouvé.</p>";
+          }
+          ?>
+            
         <!-- Section des contrats récents -->
         <div class="recent-contracts">
             <h2>Contrats Récents</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Numero contrat</th>
                         <th>Client</th>
                         <th>Type</th>
-                        <th>Date</th>
+                        <th>Date de souscription</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>Jean Dupont</td>
-                        <td>Véhicule</td>
-                        <td>2023-10-01</td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>Marie Curie</td>
-                        <td>Habitation</td>
-                        <td>2023-10-02</td>
-                    </tr>
-                    <tr>
-                        <td>003</td>
-                        <td>Pierre Durand</td>
-                        <td>Individuelle</td>
-                        <td>2023-10-03</td>
-                    </tr>
+                    <?php foreach ($result as $contrat): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($contrat['numero_contrat']); ?></td>
+                            <td><?php echo htmlspecialchars($contrat['nom_client'] . ' '. $contrat['prenom_client']); ?></td>
+                            <td><?php echo htmlspecialchars($contrat['type_assurance']); ?></td>
+                            <td><?php echo htmlspecialchars($contrat['date_souscription']); ?></td>
+                            <td>
+                                <!-- Bouton avec icône + ouverture en nouvel onglet -->
+                                <a href="contrat_auto.php?contrat=<?= $contrat['id_contrat'] ?>" 
+                                target="_blank"
+                                class="btn-view"
+                                title="Visualiser le contrat">
+                                    <i class="fas fa-file-pdf"></i> PDF
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

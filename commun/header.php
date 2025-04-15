@@ -7,10 +7,10 @@
                     <i class="fas fa-bars"></i>
                 </div>
             </div>
-            <div class="search-bar">
+            <!-- <div class="search-bar">
                 <i class="fas fa-search"></i>
                 <input type="text" placeholder="Rechercher...">
-            </div>
+            </div> -->
             <div class="user-info">
                 <span class="username"><?= $_SESSION['username'] ?></span>
             </div>
