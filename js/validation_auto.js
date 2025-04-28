@@ -15,12 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
         errorDiv.style.fontSize = '12px';
         errorDiv.style.marginTop = '5px';
         errorDiv.textContent = message;
-        
         // Ajoute le message après l'input
         input.parentElement.appendChild(errorDiv);
         input.style.borderColor = 'red';
-    }
-    
+    };
     // Fonction pour nettoyer les erreurs
     function clearError(input) {
         const existingError = input.parentElement.querySelector('.error-message');
@@ -38,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearError(this);
             }
         });
-        
         input.addEventListener('input', function() {
             if (this.value.trim()) {
                 clearError(this);
@@ -77,15 +74,44 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Validation pour l'âge du conducteur (minimum 18 ans)
-    const ageInput = document.getElementById('age_conducteur');
-    ageInput.addEventListener('input', function() {
-        if (this.value && parseInt(this.value) < 18) {
+    const dateNaissanceInput = document.getElementById('date_naissance');
+   
+    dateNaissanceInput.addEventListener('blur', function() {
+        const naissance = new Date(this.value);
+        const aujourdhui = new Date();
+        const age = aujourdhui.getFullYear() - naissance.getFullYear();
+        
+        // Vérifie si l'anniversaire est déjà passé cette année
+        if (aujourdhui.getMonth() < naissance.getMonth() || 
+            (aujourdhui.getMonth() === naissance.getMonth() && aujourdhui.getDate() < naissance.getDate())) {
+            age--;
+        }
+
+        if (age < 18) {
             showError(this, 'Le conducteur doit avoir au moins 18 ans');
         } else {
             clearError(this);
+            // Mettre à jour la validation de l'expérience si nécessaire
+            if (experienceInput.value) {
+                experienceInput.dispatchEvent(new Event('input'));
+            }
         }
     });
-    
+        const anneeVehiculeInput = document.getElementById('annee_vehicule');
+        anneeVehiculeInput.addEventListener('blur', function() {
+            if (!this.value) {
+                showError(this, 'Ce champ est obligatoire');
+                return;
+            }
+            const annee = parseInt(this.value);
+            const anneeActuelle = new Date().getFullYear();
+            
+            if (annee < 1900 || annee > anneeActuelle) {
+                showError(this, `L'année doit être entre 1900 et ${anneeActuelle}`);
+            } else {
+                clearError(this);
+            }
+        });
     // Validation pour le bonus-malus (entre 0.5 et 3.5)
     const bonusMalusInput = document.getElementById('bonus_malus');
     bonusMalusInput.addEventListener('input', function() {
@@ -95,6 +121,19 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             clearError(this);
         }
+    });
+    // Validation numéro de série et immatriculation
+    const serieInput = document.getElementById('numero_serie');
+    const immatInput = document.getElementById('immatriculation');
+
+    [serieInput, immatInput].forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value.length < 3) {
+                showError(this, 'Trop court (min 3 caractères)');
+            } else {
+                clearError(this);
+            }
+        });
     });
     
     //Set les dates automatique et des Validation
@@ -140,26 +179,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Validation de l'expérience du conducteur par rapport à son âge
     const experienceInput = document.getElementById('experience_conducteur');
     experienceInput.addEventListener('input', function() {
-        if (ageInput.value && this.value) {
-            const age = parseInt(ageInput.value);
-            const experience = parseInt(this.value);
+        if (dateNaissanceInput.value && this.value) {
+            const naissance = new Date(dateNaissanceInput.value);
+            const aujourdhui = new Date();
+            let age = aujourdhui.getFullYear() - naissance.getFullYear();
             
-            if (experience > age - 18) {
-                showError(this, 'L\'expérience ne peut pas dépasser ' + (age - 18) + ' ans');
+            // Ajustement si anniversaire pas encore passé
+            if (aujourdhui.getMonth() < naissance.getMonth() || 
+                (aujourdhui.getMonth() === naissance.getMonth() && aujourdhui.getDate() < naissance.getDate())) {
+                age--;
+            }
+
+            const experience = parseInt(this.value);
+            const experienceMax = age - 18;
+            
+            if (experience > experienceMax) {
+                showError(this, `L'expérience ne peut dépasser ${experienceMax} ans (âge: ${age} ans)`);
             } else {
                 clearError(this);
             }
         }
     });
-    
-    // Mise à jour de la validation d'expérience quand l'âge change
-    ageInput.addEventListener('change', function() {
-        if (experienceInput.value) {
-            event = new Event('input');
-            experienceInput.dispatchEvent(event);
-        }
-    });
-    
     document.getElementById('calculerPrimeBtn').addEventListener('click', async function() {
         isValide = true;        
         
@@ -184,6 +224,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
         try {
             const formData = new FormData(document.getElementById('formPrim'));
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
             const response = await fetch('calcul_prime_auto.php', {
                 method: 'POST',
                 body: formData
@@ -205,13 +248,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     // Fonction pour afficher le résultat de la prime
-    
-    function afficherResultatPrime(prime,primeNet) {
+    function afficherResultatPrime(prime, primeNet) {
         const resultatDiv = document.getElementById('resultatCalcul');
         const detailDiv = document.getElementById('detailPrime');
+    
+        // Récupération des valeurs de surcharge et réduction 
+        const surcharge = parseFloat(document.getElementById('surcharge').value) / 100 || 0;
+        const reduction = parseFloat(document.getElementById('reduction').value) / 100  || 0;
+    
+        const primeAvecSurcharge = primeNet * (1 + surcharge);
+        const primeAvecReduction = primeAvecSurcharge * (1 - reduction);
+    
+        // Affichage des résultats
         detailDiv.innerHTML = `
             <div class="prime-result">
                 <p>Prime Net: ${primeNet.toLocaleString('fr-FR')} DZD</p>
+                <p>Prime avec Surcharge: <strong>${primeAvecSurcharge.toLocaleString('fr-FR')} DZD</strong></p>
+                <p>Prime avec Réduction: <strong>${primeAvecReduction.toLocaleString('fr-FR')} DZD</strong></p>
                 <p>Prime annuelle: <strong>${prime.toLocaleString('fr-FR')} DZD</strong></p>
                 <p>Date d'effet: ${document.getElementById('date_souscription').value}</p>
                 <p>Date d'expiration: ${document.getElementById('date_expiration').value}</p>
@@ -245,5 +298,133 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Souscription en cours...';
 
     });
+        const btnRecherche = document.getElementById('btnRechercheClient');
+        
+        // Fonction de recherche
+        btnRecherche.addEventListener('click', function() {
+            const inputRecherche = document.getElementById('recherche_client');
+            const resultatsDiv = document.getElementById('resultatsClient');
+            const listeClients = document.getElementById('listeClients');
+            const terme = inputRecherche.value.trim();
+            
+            if(terme.length < 2) {
+                Swal.fire("Veuillez entrer au moins 2 caractères");
+                return;
+            }
+            
+            fetch('recherche_client.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'recherche=' + encodeURIComponent(terme)
+            })
+            .then(response => {
+                if(!response.ok) throw new Error('Erreur réseau');
+                return response.json();
+            })
+            .then(data => {
+                listeClients.innerHTML = '';
+                
+                if(data.error) {
+                    listeClients.innerHTML = `<p class="error">${data.error}</p>`;
+                } 
+                else if(data.message) {
+                    listeClients.innerHTML = `<p>${data.message}</p>`;
+                }
+                else if(data.clients && data.clients.length > 0) {
+                    data.clients.forEach(client => {
+                        const clientDiv = document.createElement('div');
+                        clientDiv.className = 'client-item';
+                        clientDiv.innerHTML = `
+                            <div class="client-info">
+                                <strong>${client.nom} ${client.prenom}</strong><br>
+                                Né(e) le: ${formatDate(client.date_naissance)}<br>
+                                Tél: ${client.telephone}<br>
+                                Email: ${client.email}
+                            </div>
+                            <button class="select-btn" 
+                                    type="button"
+                                    data-nom="${client.nom}"
+                                    data-prenom="${client.prenom}"
+                                    data-telephone="${client.telephone}"
+                                    data-email="${client.email}"
+                                    data-date_naissance="${client.date_naissance}">
+                                Sélectionner
+                            </button>
+                        `;
+                        listeClients.appendChild(clientDiv);
+                    });
+                }
+                // Fonction helper pour formater la date
+                function formatDate(dateString) {
+                    if (!dateString) return 'Non renseignée';
+                    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                    return new Date(dateString).toLocaleDateString('fr-FR', options);
+                }
+                
+                resultatsDiv.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                listeClients.innerHTML = '<p class="error">Erreur lors de la recherche</p>';
+                resultatsDiv.style.display = 'block';
+            });
+               // Gestion de la sélection d'un client
+            listeClients.addEventListener('click', function(e) {
+            if(e.target.classList.contains('select-btn')) {
+                const btn = e.target;
+                
+                // Remplissage automatique des champs
+                document.getElementById('nom_client').value = btn.dataset.nom;
+                document.getElementById('prenom_client').value = btn.dataset.prenom;
+                document.getElementById('telephone').value = btn.dataset.telephone;
+                document.getElementById('email').value = btn.dataset.email;
+                document.getElementById('date_naissance').value = btn.dataset.date_naissance;
+                // Masquer les résultats
+                resultatsDiv.style.display = 'none';
+                
+                // Vider le champ de recherche
+                inputRecherche.value = '';
+                
+                // Focus sur le champ suivant
+                document.getElementById('marque_vehicule').focus();
+            }
+        });
+        
+        // Masquer les résultats quand on clique ailleurs
+        document.addEventListener('click', function(e) {
+            if(!resultatsDiv.contains(e.target) && e.target !== inputRecherche && e.target !== btnRecherche) {
+                resultatsDiv.style.display = 'none';
+            }
+        });
+        });
+        
+     
+        //Gestion les Types des Marque
+        const marqueSelect = document.getElementById('marque_vehicule');
+        const typeSelect = document.getElementById('type_vehicule');
+        
+        const typesParMarque = {
+            'renault': ['Clio', 'Megane', 'Kadjar'],
+            'peugeot': ['208', '308', '3008'],
+            'citroen': ['C3', 'C4', 'C5 Aircross'],
+            'volkswagen': ['Golf', 'Passat', 'Tiguan'],
+            'bmw': ['Série 1', 'Série 3', 'X3']
+        };
+        
+        marqueSelect.addEventListener('change', function() {
+            const marque = this.value;
+            typeSelect.innerHTML = '<option value="">-- Sélectionnez --</option>';
+            
+            if(marque && typesParMarque[marque]) {
+                typesParMarque[marque].forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    typeSelect.appendChild(option);
+                });
+            }
+        });
 });
 

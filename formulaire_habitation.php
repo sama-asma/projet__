@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assurance véhicule</title>
+    <title>Assurance habitation</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/logo.png" type="image/png">
     <!-- Include SweetAlert2 CSS -->
@@ -36,8 +36,8 @@ if (!isset($_SESSION['user_id'])) {
                 <?php unset($_SESSION['form_errors']); ?>
             </div>
         <?php endif; ?>
-        <form id="formPrim" method="POST" action="traitement_auto.php" novalidate> <!-- novalidate: désactiver validation html -->
-            <h1>Souscription Assurance Véhicule</h1>
+        <form id="formPrim" method="POST" action="traitement_habitation.php" novalidate> <!-- novalidate: désactiver validation html -->
+            <h1>Souscription Assurance Habitation</h1>
             
             <!-- Recherche client existant -->
             <div class="form-section">
@@ -55,7 +55,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
 
-          <!-- Informations client (sera pré-rempli après recherche) -->
+            <!-- Informations client -->
             <div class="form-section">
                 <h2>Informations du Client</h2>
                 <div class="form-row">
@@ -85,107 +85,137 @@ if (!isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </div>
-            <!-- Données véhicule -->
+
+            <!-- Informations sur le logement -->
             <div class="form-section">
-                <h2>Informations du Véhicule</h2>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="marque_vehicule" class="required">Marque du véhicule</label>
-                            <select id="marque_vehicule" name="marque_vehicule" required>
-                                <option value="">-- Sélectionnez --</option>
-                                <option value="renault">Renault</option>
-                                <option value="peugeot">Peugeot</option>
-                                <option value="citroen">Citroën</option>
-                                <option value="volkswagen">Volkswagen</option>
-                                <option value="bmw">BMW</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="type_vehicule" class="required">Type de véhicule</label>
-                            <select id="type_vehicule" name="type_vehicule" required>
-                                <option value="">-- Sélectionnez une marque d'abord --</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="numero_serie" class="required">Numéro de série</label>
-                            <input type="text" id="numero_serie" name="numero_serie" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="immatriculation" class="required">Immatriculation</label>
-                            <input type="text" id="immatriculation" name="immatriculation" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="puissance_vehicule" class="required">Puissance (CV)</label>
-                            <input type="number" id="puissance_vehicule" name="puissance_vehicule" step="0.01" min="50" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="annee_vehicule" class="required">Année du véhicule</label>
-                            <input type="number" id="annee_vehicule" name="annee_vehicule" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="condition_stationnement" class="required">Condition de stationnement</label>
-                            <select id="condition_stationnement" name="condition_stationnement" required>
-                                <option value="">-- Sélectionnez --</option>
-                                <option value="garage">Garage</option>
-                                <option value="parking privé">Parking privé</option>
-                                <option value="rue">Rue</option>
-                            </select>
-                        </div>
-                    </div>
-                   
-            </div>
-            <!-- Profil Conducteur -->
-            <div class="form-section">
-                <h2>Profil du Conducteur</h2>
+                <h2>Informations du Logement</h2>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="experience_conducteur" class="required">Expérience (années)</label>
-                        <input type="number" id="experience_conducteur" name="experience_conducteur" min="0" required>
+                        <label for="statut_logement" class="required">Statut du logement</label>
+                        <select id="statut_logement" name="statut_logement" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="proprietaire">Propriétaire</option>
+                            <option value="locataire">Locataire</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="bonus_malus" class="required">Coefficient Bonus-Malus</label>
-                        <input type="number" id="bonus_malus" name="bonus_malus" step="0.01" min="0.5" value="1.00" max="3.5" required>
+                        <label for="type_logement" class="required">Type de logement</label>
+                        <select id="type_logement" name="type_logement" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="maison">Maison</option>
+                            <option value="appartement">Appartement</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="usage" class="required">Usage du véhicule</label>
-                        <select id="usage" name="usage" required>
+                        <label for="superficie" class="required">Superficie (m²)</label>
+                        <input type="number" id="superficie" name="superficie" min="10" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="annee_construction" class="required">Année de construction</label>
+                        <input type="number" id="annee_construction" name="annee_construction" min="1800" max="<?= date('Y'); ?>" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="localisation" class="required">Localisation</label>
+                        <select id="localisation" name="localisation" required>
                             <option value="">-- Sélectionnez --</option>
-                            <option value="personnel">Personnel</option>
-                            <option value="professionnel">Professionnel</option>
-                            <option value="mixte">Mixte</option>
+                            <option value="urbain">Zone urbaine</option>
+                            <option value="rural">Zone rurale</option>
+                            <option value="risque">Zone à risque</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="environnement" class="required">Environnement</label>
-                        <select id="environnement" name="environnement" required>
+                        <label for="materiaux" class="required">Matériaux de construction</label>
+                        <select id="materiaux" name="materiaux" required>
                             <option value="">-- Sélectionnez --</option>
-                            <option value="urbain">Urbain</option>
-                            <option value="rural">Rural</option>
-                            <option value="mixte">Mixte</option>
+                            <option value="resistant">Matériaux résistants</option>
+                            <option value="standard">Matériaux standards</option>
+                            <option value="fragile">Matériaux fragiles</option>
                         </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="etat_toiture" class="required">État de la toiture</label>
+                        <select id="etat_toiture" name="etat_toiture" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="bon">Bon</option>
+                            <option value="moyen">Moyen</option>
+                            <option value="mauvais">Mauvais</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="occupation" class="required">Occupation</label>
+                        <select id="occupation" name="occupation" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="principale">Résidence principale</option>
+                            <option value="secondaire">Résidence secondaire</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nb_occupants" class="required">Nombre d'occupants</label>
+                        <input type="number" id="nb_occupants" name="nb_occupants" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="capital_mobilier" class="required">Capital mobilier assuré (€)</label>
+                        <input type="number" id="capital_mobilier" name="capital_mobilier" min="0" required>
                     </div>
                 </div>
             </div>
 
-            <!-- Réductions et surcharges-->
+            <!-- Mesures de sécurité -->
+            <div class="form-section">
+                <h2>Mesures de Sécurité</h2>
+                <div class="form-row">
+                    <div class="form-group checkbox-group">
+                        <label>Systèmes de sécurité installés</label>
+                        <div>
+                            <input type="checkbox" id="alarme" name="securite[]" value="alarme">
+                            <label for="alarme">Alarme</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="detecteur_fumee" name="securite[]" value="detecteur_fumee">
+                            <label for="detecteur_fumee">Détecteur de fumée</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="surveillance" name="securite[]" value="surveillance">
+                            <label for="surveillance">Système de surveillance</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Antécédents d'assurance -->
+            <div class="form-section">
+                <h2>Antécédents d'Assurance</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="antecedents" class="required">Nombre de sinistres déclarés (5 dernières années)</label>
+                        <input type="number" id="antecedents" name="antecedents" min="0" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Réductions et surcharges -->
             <div class="form-section">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="reduction">Réduction: (En %)</label>
-                        <input type="number" name="reduction" id="reduction">
+                        <input type="number" name="reduction" id="reduction" min="0" max="50">
                     </div>
                     <div class="form-group">
-                        <label for="surcharge" class="required" >Surcharge: (En %)</label>
-                        <input type="number" name="surcharge" id="surcharge" required>
+                        <label for="surcharge">Surcharge: (En %)</label>
+                        <input type="number" name="surcharge" id="surcharge" required >
                     </div>
                 </div>
             </div>
+
             <!-- Section Garanties -->
             <div class="form-section">
                 <h2>Garanties</h2>
@@ -194,7 +224,7 @@ if (!isset($_SESSION['user_id'])) {
                     <?php
                         require 'db.php';
                         // Récupération des garanties depuis la base de données
-                        $query = "SELECT id_garantie, type_assurance, nom_garantie, description FROM garanties WHERE type_assurance = 'automobile'";
+                        $query = "SELECT id_garantie, type_assurance, nom_garantie, description FROM garanties WHERE type_assurance = 'habitation'";
                         $result = $conn->query($query);
 
                         // Vérifier si des données existent
@@ -217,19 +247,20 @@ if (!isset($_SESSION['user_id'])) {
                         </select>
                 </div>
             </div>
+
             <!-- Section Contrat -->
             <div class="form-section">
                 <h2>Informations de Contrat</h2>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="date_souscription" class="required">Date de souscription</label>
-                            <input type="date" id="date_souscription" name="date_souscription" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="date_expiration" class="required">Date d'expiration</label>
-                            <input type="date" id="date_expiration" name="date_expiration" required>
-                        </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date_souscription" class="required">Date de souscription</label>
+                        <input type="date" id="date_souscription" name="date_souscription" required>
                     </div>
+                    <div class="form-group">
+                        <label for="date_expiration" class="required">Date d'expiration</label>
+                        <input type="date" id="date_expiration" name="date_expiration" required>
+                    </div>
+                </div>
             </div>
             <div>
                 <input type="hidden" name="prime_calculee" id="prime">
@@ -238,7 +269,6 @@ if (!isset($_SESSION['user_id'])) {
             <div class="buttons-container">
                 <button type="button" id="calculerPrimeBtn">Calculer la prime</button>
                 <button type="submit" id="souscrireBtn" class="generate" style="display:none;">Souscrire le contrat</button>
-
             </div>
         </form>
 
@@ -249,9 +279,9 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <script src="js/validation_auto.js"></script> 
+    <script src="js/validation_habitation.js"></script> 
     <script src="js/script.js"></script> 
     <!-- Include SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </body>
+</body>
 </html>

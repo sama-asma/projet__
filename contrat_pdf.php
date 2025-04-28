@@ -81,7 +81,20 @@ class ContratPDF extends FPDF {
         $this->SetFont('Arial', '', 10);
         $this->Cell(130, 6, $value, 0, 1);
     }
-    
+    // Fonction pour créer double ligne d'information
+    public function InfoLineDouble($label1, $value1, $label2, $value2, $labelWidth = 45) {
+        // Première paire label/valeur
+        $this->SetFont('Arial', 'B', 10);
+        $this->Cell($labelWidth, 6, $label1, 0, 0);
+        $this->SetFont('Arial', '', 10);
+        $this->Cell($labelWidth, 6, $value1, 0, 0);
+        
+        // Seconde paire label/valeur
+        $this->SetFont('Arial', 'B', 10);
+        $this->Cell($labelWidth, 6, $label2, 0, 0);
+        $this->SetFont('Arial', '', 10);
+        $this->Cell($labelWidth, 6, $value2, 0, 1); // Notez le 1 pour le saut de ligne final
+    }
     // Bloc signature à la fin du contrat
     public function AddSignatureBlock() {
         $this->Cell(0, 6, 'Fait à __________________________, le ' . date('d/m/Y'), 0, 1);
@@ -95,14 +108,55 @@ class ContratPDF extends FPDF {
         $this->Cell(95, 6, '_______________________', 0, 1, 'C');
     }
     
-     // Clause légale générique
-    // public function AddLegalClause($text = null) {
-    //     if ($text === null) {
-    //         $text = 'Ce contrat est soumis aux dispositions du Code des Assurances. Le souscripteur reconnaît avoir reçu un exemplaire des conditions générales applicables à ce contrat et en avoir pris connaissance avant la signature du présent document.';
-    //     }
+    public function addPrimeDetails($primeBase, $reduction, $surcharge, $primeFinale, $coefficients = []) {
+        $this->SectionTitle('DÉTAIL DU CALCUL DE LA PRIME');
         
-    //     $this->Ln(15);
-    //     $this->SetFont('Arial', 'I', 8);
-    //     $this->MultiCell(0, 4, $text);
-    // }
+        // Style pour les labels
+        $this->SetFont('Arial', 'B', 10);
+        
+        // Prime de base
+        $this->Cell(100, 6, 'Prime de base:', 0, 0);
+        $this->Cell(0, 6, number_format($primeBase, 2, ',', ' ') . ' DZD', 0, 1);
+        
+        // Affichage des coefficients s'ils sont fournis
+        if (!empty($coefficients)) {
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(0, 6, 'Coefficients appliqués:', 0, 1);
+            $this->SetFont('Arial', '', 10);
+            
+            foreach ($coefficients as $label => $value) {
+                $this->Cell(100, 6, '- ' . $label . ':', 0, 0);
+                $this->Cell(0, 6, number_format($value, 2, ',', ' '), 0, 1);
+            }
+            $this->Ln(2);
+        }
+        
+        // Réduction
+        if ($reduction > 0) {
+            $montantReduction = $primeBase * $reduction / 100;
+            $this->Cell(100, 6, 'Réduction (' . $reduction . '%):', 0, 0);
+            $this->Cell(0, 6, '- ' . number_format($montantReduction, 2, ',', ' ') . ' DZD', 0, 1);
+        }
+        
+        // Surcharge
+        if ($surcharge > 0) {
+            $montantSurcharge = $primeBase * $surcharge / 100;
+            $this->Cell(100, 6, 'Surcharge (' . $surcharge . '%):', 0, 0);
+            $this->Cell(0, 6, '+ ' . number_format($montantSurcharge, 2, ',', ' ') . ' DZD', 0, 1);
+        }
+        
+        // Ligne de séparation
+        $this->SetDrawColor(150, 150, 150);
+        $this->Cell(0, 0, '', 'T', 1);
+        $this->Ln(2);
+        
+        // Prime finale
+        $this->SetFont('Arial', 'B', 11);
+        $this->Cell(100, 8, 'Prime finale:', 0, 0);
+        $this->Cell(0, 8, number_format($primeFinale, 2, ',', ' ') . ' DZD', 0, 1);
+        
+        $this->Ln(15);
+        // Ajouter un saut de page
+        $this->AddPage();
+    }
 }

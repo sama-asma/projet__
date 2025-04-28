@@ -29,7 +29,7 @@ if (!isset($_SESSION['user_id'])) {
             <button class="vehicule" onclick="window.location.href='formulaire_vehicule.php'">
                  <i class="fas fa-car"></i> Assurance véhicule
             </button>
-            <button class="habitation">
+            <button class="habitation" onclick="window.location.href='formulaire_habitation.php'">
                  <i class="fas fa-home"></i> Assurance habitation
             </button>
             <div class="btn-container">

@@ -42,11 +42,23 @@ if (!isset($_SESSION['user_id'])) {
         </div> -->
         <?php 
           require('db.php');
-          $stmt = $conn->prepare("SELECT * FROM contrats ORDER BY date_souscription DESC LIMIT 5;");
-          $stmt->execute();
-          $result = $stmt->get_result();
-          if($result->num_rows == 0){
-            echo "<p>Aucun contrat trouvé.</p>";
+          try{
+                $stmt = $conn->prepare("
+                        SELECT c.id_contrat, c.numero_contrat, c.type_assurance, c.date_souscription,
+                            cl.nom_client, cl.prenom_client
+                        FROM contrats c
+                        JOIN client cl ON c.id_client = cl.id_client
+                        ORDER BY c.date_souscription DESC 
+                        LIMIT 10
+                    ");
+                    if (!$stmt->execute()) {
+                        throw new Exception("Erreur lors de la récupération des contrats");
+                    }
+                $result = $stmt->get_result();
+          }
+          catch(Exception $e){
+            echo "<div>Erreur: " . htmlspecialchars($e->getMessage()) . "</div>";
+            $result = [];
           }
           ?>
             
