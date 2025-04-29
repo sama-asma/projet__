@@ -43,7 +43,7 @@ if (!isset($_SESSION['user_id'])) {
                     <button class="sante">
                         <i class="fas fa-stethoscope"></i> Santé
                     </button>
-                    <button class="scolarite">
+                    <button class="scolarite" onclick="window.location.href='formulaire_scolarite.php'">
                         <i class="fas fa-graduation-cap"></i> Scolarité
                     </button>
                 </div>
@@ -53,8 +53,8 @@ if (!isset($_SESSION['user_id'])) {
                     <i class="fas fa-chart-line"></i> Assurance finance
                 </button>
                 <div id="finance-options">
-                    <button class="emprunt">
-                        <i class="fas fa-hand-holding-usd"></i> Emprunt
+                    <button class="emprunt" onclick="window.location.href='formulaire_emprunt.php'">
+                        <i class="fas fa-hand-holding-usd" ></i> Emprunt
                     </button>
                     <button class="protection-juridique">
                         <i class="fas fa-gavel"></i> Protection Juridique
