@@ -56,10 +56,10 @@ if (!isset($_SESSION['user_id'])) {
                     <button class="emprunt" onclick="window.location.href='formulaire_emprunt.php'">
                         <i class="fas fa-hand-holding-usd" ></i> Emprunt
                     </button>
-                    <button class="protection-juridique">
+                    <button class="protection-juridique" onclick="window.location.href='formulaire_protec.php'">
                         <i class="fas fa-gavel"></i> Protection Juridique
                     </button>
-                    <button class="cyberattaque">
+                    <button class="cyberattaque" onclick="window.location.href='formulaire_cyber.php'">
                         <i class="fas fa-shield-alt"></i> Cyberattaque
                     </button>
                 </div>

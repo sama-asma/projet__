@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assurance Scolaire</title>
+    <title>Assurance Protection Juridique</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/logo.png" type="image/png">
     <!-- Include SweetAlert2 CSS -->
@@ -19,12 +19,12 @@ if (!isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- navigation -->
+    <!-- Navigation -->
     <?php include 'commun/nav.php'; ?>
     <!-- Contenu principal -->
     <div class="main-content">
         <!-- En-tête -->
-       <?php include 'commun/header.php'; ?>
+        <?php include 'commun/header.php'; ?>
         <!-- Contenu -->
         <?php if (isset($_SESSION['form_errors'])): ?>
             <div class="alert alert-danger">
@@ -36,8 +36,8 @@ if (!isset($_SESSION['user_id'])) {
                 <?php unset($_SESSION['form_errors']); ?>
             </div>
         <?php endif; ?>
-        <form id="formPrim" method="POST" action="traitement_auto.php" novalidate> <!-- novalidate: désactiver validation html -->
-            <h1>Souscription Assurance Scolarité</h1>
+        <form id="formProtectionJuridique" method="POST" action="traitement_protection_juridique.php" novalidate>
+            <h1>Souscription Assurance Protection Juridique</h1>
             
             <!-- Recherche client existant -->
             <div class="form-section">
@@ -55,7 +55,7 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
 
-          <!-- Informations client (sera pré-rempli après recherche) -->
+            <!-- Informations client -->
             <div class="form-section">
                 <h2>Informations du Client</h2>
                 <div class="form-row">
@@ -85,97 +85,76 @@ if (!isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </div>
-<!-- Formulaire assurance scolaire -->
-<h1>Souscription Assurance Scolaire</h1>
 
-<!-- Informations de l'élève -->
-<div class="form-section">
-    <h2>Informations de l'Élève</h2>
-    <div class="form-row">
-        <div class="form-group">
-            <label for="nom_eleve" class="required">Nom de l'élève</label>
-            <input type="text" id="nom_eleve" name="nom_eleve" required>
-        </div>
-        <div class="form-group">
-            <label for="prenom_eleve" class="required">Prénom de l'élève</label>
-            <input type="text" id="prenom_eleve" name="prenom_eleve" required>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group">
-            <label for="date_naissance" class="required">Date de naissance</label>
-            <input type="date" id="date_naissance" name="date_naissance" max="<?= date('Y-m-d'); ?>" required>
-        </div>
-        <div class="form-group">
-            <label for="age_eleve">Âge</label>
-            <input type="number" id="age_eleve" name="age_eleve" min="3" max="25" required>
-        </div>
-    </div>
-</div>
-
-<!-- Environnement scolaire -->
-<div class="form-section">
-    <h2>Environnement Scolaire</h2>
-    <div class="form-row">
-        <div class="form-group">
-            <label for="type_etablissement" class="required">Type d'établissement</label>
-            <select id="type_etablissement" name="type_etablissement" required>
-                <option value="">-- Sélectionnez --</option>
-                <option value="primaire">Primaire</option>
-                <option value="collège">Collège</option>
-                <option value="lycée">Lycée</option>
-                <option value="université">Université</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="climat" class="required">Climat</label>
-            <select id="climat" name="climat" required>
-                <option value="">-- Sélectionnez --</option>
-                <option value="froid">Froid</option>
-                <option value="tempéré">Tempéré</option>
-                <option value="chaud">Chaud</option>
-            </select>
-        </div>
-    </div>
-</div>
-
-<!-- État de santé -->
-<div class="form-section">
-    <h2>État de Santé</h2>
-    <div class="form-row">
-        <div class="form-group">
-            <label for="etat_sante" class="required">État de santé général</label>
-            <select id="etat_sante" name="etat_sante" required>
-                <option value="">-- Sélectionnez --</option>
-                <option value="bon">Bon</option>
-                <option value="fragile">Fragile</option>
-                <option value="maladie_chronique">Maladie chronique</option>
-            </select>
-        </div>
-    </div>
-</div>
- <!-- Réductions et surcharges-->
- <div class="form-section">
+            <!-- Situation professionnelle -->
+            <div class="form-section">
+                <h2>Situation Professionnelle</h2>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="reduction">Réduction: (En %)</label>
-                        <input type="number" name="reduction" id="reduction">
+                        <label for="situation_pro" class="required">Situation professionnelle</label>
+                        <select id="situation_pro" name="situation_pro" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="salarie">Salarié</option>
+                            <option value="independant">Indépendant</option>
+                            <option value="retraite">Retraité</option>
+                            <option value="sans_emploi">Sans emploi</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="surcharge" class="required" >Surcharge: (En %)</label>
-                        <input type="number" name="surcharge" id="surcharge" required>
+                        <label for="secteur_activite">Secteur d'activité</label>
+                        <input type="text" id="secteur_activite" name="secteur_activite" placeholder="Ex: Commerce, Santé, etc.">
                     </div>
                 </div>
             </div>
- <!-- Section Garanties -->
- <div class="form-section">
+
+            <!-- Besoins juridiques -->
+            <div class="form-section">
+                <h2>Besoins Juridiques</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="type_litige" class="required">Type de litige couvert</label>
+                        <select id="type_litige" name="type_litige" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="personnel">Litiges personnels (ex: voisinage, consommation)</option>
+                            <option value="professionnel">Litiges professionnels (ex: contrat de travail)</option>
+                            <option value="mixte">Litiges personnels et professionnels</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="frequence_litige">Fréquence estimée des litiges</label>
+                        <select id="frequence_litige" name="frequence_litige">
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="rare">Rare (moins d'une fois par an)</option>
+                            <option value="occasionnel">Occasionnel (1-2 fois par an)</option>
+                            <option value="frequent">Fréquent (plus de 2 fois par an)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Réductions et surcharges -->
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reduction">Réduction (%)</label>
+                        <input type="number" name="reduction" id="reduction" min="0" max="100" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="surcharge" class="required">Surcharge (%)</label>
+                        <input type="number" name="surcharge" id="surcharge" min="0" max="100" step="1" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Garanties -->
+            <div class="form-section">
                 <h2>Garanties</h2>
                 <div class="form-group">
                     <label for="id_garantie" class="required">Type de garantie</label>
                     <?php
                         require 'db.php';
                         // Récupération des garanties depuis la base de données
-                        $query = "SELECT id_garantie, type_assurance, nom_garantie, description FROM garanties WHERE type_assurance = 'scolarité'";
+                        $query = "SELECT id_garantie, type_assurance, nom_garantie, description FROM garanties WHERE nom_garantie = 'protection'";
                         $result = $conn->query($query);
 
                         // Vérifier si des données existent
@@ -185,17 +164,16 @@ if (!isset($_SESSION['user_id'])) {
                                 $garanties[] = $row;
                             }
                         }
-                        ?>
-                      
-                        <select id="id_garantie" name="id_garantie" required>
-                            <option value="">-- Sélectionnez --</option>
-                            <?php foreach ($garanties as $garantie) : ?>
-                                <option value="<?= (string)htmlspecialchars($garantie['id_garantie']) ?>">
-                                    <?= htmlspecialchars($garantie['nom_garantie'] ) ?> - 
-                                    <?= htmlspecialchars($garantie['description']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                    ?>
+                    <select id="id_garantie" name="id_garantie" required>
+                        <option value="">-- Sélectionnez --</option>
+                        <?php foreach ($garanties as $garantie) : ?>
+                            <option value="<?= htmlspecialchars($garantie['id_garantie']) ?>">
+                                <?= htmlspecialchars($garantie['nom_garantie']) ?> - 
+                                <?= htmlspecialchars($garantie['description']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
 
@@ -213,10 +191,12 @@ if (!isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </div>
+
             <div>
                 <input type="hidden" name="prime_calculee" id="prime">
                 <input type="hidden" name="franchise" id="franchise">
             </div>
+
             <div class="buttons-container">
                 <button type="button" id="calculerPrimeBtn">Calculer la prime</button>
                 <button type="submit" id="souscrireBtn" class="generate" style="display:none;">Souscrire le contrat</button>
@@ -230,10 +210,9 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <script src="js/validation_scol.js"></script> 
+    <script src="js/validation_protec.js"></script> 
     <script src="js/script.js"></script> 
-
     <!-- Include SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
-</html>                            
+</html>

@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assurance Emprunt</title>
+    <title>Assurance Cyber Attaque</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/logo.png" type="image/png">
     <!-- Include SweetAlert2 CSS -->
@@ -36,8 +36,8 @@ if (!isset($_SESSION['user_id'])) {
                 <?php unset($_SESSION['form_errors']); ?>
             </div>
         <?php endif; ?>
-        <form id="formEmprunt" method="POST" action="traitement_emprunt.php" novalidate>
-            <h1>Souscription Assurance Emprunt</h1>
+        <form id="formCyberAttaque" method="POST" action="traitement_cyber_attaque.php" novalidate>
+            <h1>Souscription Assurance Cyber Attaque</h1>
             
             <!-- Recherche client existant -->
             <div class="form-section">
@@ -45,7 +45,7 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="form-row">
                     <div class="form-group">
                         <label for="recherche_client">Rechercher un client existant</label>
-                        <input type="text" id="recherche_client" name="recherche_client" placeholder="Nom, prénom">
+                        <input type="text" id="recherche_client" name="recherche_client" placeholder="Nom, prénom ou entreprise">
                         <button type="button" id="btnRechercheClient">Rechercher</button>
                     </div>
                 </div>
@@ -60,12 +60,12 @@ if (!isset($_SESSION['user_id'])) {
                 <h2>Informations du Client</h2>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="nom_client" class="required">Nom</label>
+                        <label for="nom_client" class="required">Nom (ou raison sociale)</label>
                         <input type="text" id="nom_client" name="nom_client" required>
                     </div>
                     <div class="form-group">
-                        <label for="prenom_client" class="required">Prénom</label>
-                        <input type="text" id="prenom_client" name="prenom_client" required>
+                        <label for="prenom_client">Prénom (si particulier)</label>
+                        <input type="text" id="prenom_client" name="prenom_client">
                     </div>
                 </div>
                 <div class="form-row">
@@ -80,84 +80,75 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="date_naissance" class="required">Date de naissance</label>
-                        <input type="date" id="date_naissance" name="date_naissance" max="<?= date('Y-m-d'); ?>" required>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Informations sur le prêt -->
-            <div class="form-section">
-                <h2>Informations sur le Prêt</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="montant_pret" class="required">Montant du prêt (€)</label>
-                        <input type="number" id="montant_pret" name="montant_pret" min="1000" step="100" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="duree_pret" class="required">Durée du prêt (années)</label>
-                        <input type="number" id="duree_pret" name="duree_pret" min="1" max="30" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="type_pret" class="required">Type de prêt</label>
-                        <select id="type_pret" name="type_pret" required>
+                        <label for="type_client" class="required">Type de client</label>
+                        <select id="type_client" name="type_client" required>
                             <option value="">-- Sélectionnez --</option>
-                            <option value="immobilier">Prêt immobilier</option>
-                            <option value="consommation">Prêt à la consommation</option>
-                            <option value="auto">Prêt auto</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="taux_interet" class="required">Taux d'intérêt (%)</label>
-                        <input type="number" id="taux_interet" name="taux_interet" min="0" max="20" step="0.01" required>
-                    </div>
-                </div>
-            </div>
-
-            <!-- État de santé -->
-            <div class="form-section">
-                <h2>État de Santé</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="etat_sante" class="required">État de santé général</label>
-                        <select id="etat_sante" name="etat_sante" required>
-                            <option value="">-- Sélectionnez --</option>
-                            <option value="bon">Bon</option>
-                            <option value="fragile">Fragile</option>
-                            <option value="maladie_chronique">Maladie chronique</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="fumeur" class="required">Fumeur</label>
-                        <select id="fumeur" name="fumeur" required>
-                            <option value="">-- Sélectionnez --</option>
-                            <option value="oui">Oui</option>
-                            <option value="non">Non</option>
+                            <option value="particulier">Particulier</option>
+                            <option value="entreprise">Entreprise</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- Situation professionnelle -->
-            <div class="form-section">
-                <h2>Situation Professionnelle</h2>
+            <!-- Informations sur l'entreprise (si applicable) -->
+            <div class="form-section" id="entrepriseSection" style="display:none;">
+                <h2>Informations sur l'Entreprise</h2>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="situation_pro" class="required">Situation professionnelle</label>
-                        <select id="situation_pro" name="situation_pro" required>
+                        <label for="taille_entreprise" class="required">Taille de l'entreprise</label>
+                        <select id="taille_entreprise" name="taille_entreprise" required>
                             <option value="">-- Sélectionnez --</option>
-                            <option value="cdi">CDI</option>
-                            <option value="cdd">CDD</option>
-                            <option value="independant">Indépendant</option>
-                            <option value="fonctionnaire">Fonctionnaire</option>
-                            <option value="sans_emploi">Sans emploi</option>
+                            <option value="tpe">TPE (<10 employés)</option>
+                            <option value="pme">PME (10-250 employés)</option>
+                            <option value="grande">Grande entreprise (>250 employés)</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="revenu_mensuel" class="required">Revenu mensuel (€)</label>
-                        <input type="number" id="revenu_mensuel" name="revenu_mensuel" min="0" step="100" required>
+                        <label for="secteur_activite" class="required">Secteur d'activité</label>
+                        <input type="text" id="secteur_activite" name="secteur_activite" placeholder="Ex: Technologie, Finance, etc." required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="chiffre_affaires">Chiffre d'affaires annuel (DZD)</label>
+                        <input type="number" id="chiffre_affaires" name="chiffre_affaires" min="0" step="1000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Infrastructure informatique -->
+            <div class="form-section">
+                <h2>Infrastructure Informatique</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="niveau_securite" class="required">Niveau de sécurité actuel</label>
+                        <select id="niveau_securite" name="niveau_securite" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="basique">Basique (antivirus uniquement)</option>
+                            <option value="intermediaire">Intermédiaire (firewall, antivirus)</option>
+                            <option value="avance">Avancé (SIEM, audits réguliers)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="historique_attaques">Historique de cyberattaques</label>
+                        <select id="historique_attaques" name="historique_attaques">
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="aucune">Aucune</option>
+                            <option value="mineure">Mineure(s)</option>
+                            <option value="majeure">Majeure(s)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="donnees_sensibles" class="required">Données sensibles gérées</label>
+                        <select id="donnees_sensibles" name="donnees_sensibles" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="aucune">Aucune</option>
+                            <option value="personnelles">Données personnelles</option>
+                            <option value="financieres">Données financières</option>
+                            <option value="confidentielles">Données confidentielles</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -184,7 +175,7 @@ if (!isset($_SESSION['user_id'])) {
                     <?php
                         require 'db.php';
                         // Récupération des garanties depuis la base de données
-                        $query = "SELECT id_garantie, type_assurance, nom_garantie, description FROM garanties WHERE nom_garantie = 'pret'";
+                        $query = "SELECT id_garantie, type_assurance, nom_garantie, description FROM garanties WHERE nom_garantie = 'cyber'";
                         $result = $conn->query($query);
 
                         // Vérifier si des données existent
@@ -240,7 +231,7 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <script src="js/validation_emprunt.js"></script> 
+    <script src="js/validation_cyber.js"></script> 
     <script src="js/script.js"></script> 
     <!-- Include SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
