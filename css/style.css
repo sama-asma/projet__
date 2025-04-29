@@ -426,20 +426,55 @@ button.generate:hover {
   display: none;
 }
 
+/* Conteneur principal */
 .checkbox-group {
-  margin-bottom: 10px;
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  border: 1px solid #ddd;
 }
 
-.checkbox-label {
-  display: inline-flex;
+/* Titre */
+.checkbox-group > label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Conteneur de chaque option */
+.checkbox-group > div {
+  margin: 0.5rem 0;
+  display: flex;
   align-items: center;
-  margin-right: 20px;
-  font-weight: normal;
 }
 
-.checkbox-label input {
-  width: auto;
-  margin-right: 5px;
+/* Case à cocher native */
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  accent-color: #3498db; /* Change la couleur de la checkbox */
+  cursor: pointer;
+}
+
+/* Label des options */
+.checkbox-group div label {
+  cursor: pointer;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+/* Effet au survol */
+.checkbox-group label:hover {
+  color: #000;
+}
+
+/* Quand la checkbox est cochée */
+.checkbox-group input[type="checkbox"]:checked + label {
+  font-weight: 500;
+  color: #2c3e50;
 }
 
 .form-row {

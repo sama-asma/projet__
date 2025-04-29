@@ -72,68 +72,123 @@ document.addEventListener('DOMContentLoaded', function() {
             clearError(this);
         }
     });
-    
-    // Validation pour l'âge du conducteur (minimum 18 ans)
-    const dateNaissanceInput = document.getElementById('date_naissance');
-   
-    dateNaissanceInput.addEventListener('blur', function() {
-        const naissance = new Date(this.value);
-        const aujourdhui = new Date();
-        const age = aujourdhui.getFullYear() - naissance.getFullYear();
-        
-        // Vérifie si l'anniversaire est déjà passé cette année
-        if (aujourdhui.getMonth() < naissance.getMonth() || 
-            (aujourdhui.getMonth() === naissance.getMonth() && aujourdhui.getDate() < naissance.getDate())) {
-            age--;
-        }
+    // Variables globales
+    let wilayasData = [];
+    let communesData = [];
 
-        if (age < 18) {
-            showError(this, 'Le conducteur doit avoir au moins 18 ans');
-        } else {
-            clearError(this);
-            // Mettre à jour la validation de l'expérience si nécessaire
-            if (experienceInput.value) {
-                experienceInput.dispatchEvent(new Event('input'));
-            }
-        }
-    });
-        const anneeVehiculeInput = document.getElementById('annee_vehicule');
-        anneeVehiculeInput.addEventListener('blur', function() {
-            if (!this.value) {
-                showError(this, 'Ce champ est obligatoire');
-                return;
-            }
-            const annee = parseInt(this.value);
-            const anneeActuelle = new Date().getFullYear();
+    // Chargement des données
+    async function loadGeoData() {
+        try {
+            // Chargez les fichiers JSON 
+            const [wilayasResponse, communesResponse] = await Promise.all([
+                fetch('js/wilayas.json'),
+                fetch('js/communes.json')
+            ]);
             
-            if (annee < 1900 || annee > anneeActuelle) {
-                showError(this, `L'année doit être entre 1900 et ${anneeActuelle}`);
-            } else {
-                clearError(this);
-            }
+            wilayasData = await wilayasResponse.json();
+            communesData = await communesResponse.json();
+            
+            remplirWilayas();
+        } catch (error) {
+            console.error("Erreur de chargement des données:", error);
+        }
+    }
+
+    // Remplir la liste des wilayas
+    function remplirWilayas() {
+        const wilayaSelect = document.getElementById('wilaya');
+        
+        wilayasData.forEach(wilaya => {
+            const option = document.createElement('option');
+            option.value = wilaya.code;
+            option.textContent = wilaya.nom; 
+            wilayaSelect.appendChild(option);
         });
-    // Validation pour le bonus-malus (entre 0.5 et 3.5)
-    const bonusMalusInput = document.getElementById('bonus_malus');
-    bonusMalusInput.addEventListener('input', function() {
-        const value = parseFloat(this.value);
-        if (this.value && (value < 0.5 || value > 3.5)) {
-            showError(this, 'Le coefficient doit être entre 0.5 et 3.5');
+    }
+      // Appel de la fonction pour charger les données
+      loadGeoData();
+
+    // Gestion du changement de wilaya
+    document.getElementById('wilaya').addEventListener('change', function() {
+        const wilayaCode = this.value;
+        const communeSelect = document.getElementById('commune');
+        
+        // Réinitialiser
+        communeSelect.innerHTML = '<option value="">-- Sélectionnez --</option>';
+        communeSelect.disabled = !wilayaCode;
+        
+        if (wilayaCode) {
+            // Filtrer les communes par wilaya
+            const communes = communesData.filter(commune => commune.wilaya_id === wilayaCode);
+            
+            communes.forEach(commune => {
+                const option = document.createElement('option');
+                option.value = commune.id;
+                option.textContent = commune.nom; 
+                communeSelect.appendChild(option);
+            });
+        }
+    });
+    // la validation de  l'année de construction
+    const anneeConstructionInput = document.getElementById('annee_construction');
+    anneeConstructionInput.addEventListener('blur', function() {
+        if (!this.value) {
+            showError(this, 'Ce champ est obligatoire');
+            return;
+        }
+        const annee = parseInt(this.value);
+        const anneeActuelle = new Date().getFullYear();
+        
+        if (annee < 1900 || annee > anneeActuelle) {
+            showError(this, `L'année doit être entre 1900 et ${anneeActuelle}`);
         } else {
             clearError(this);
         }
     });
-    // Validation numéro de série et immatriculation
-    const serieInput = document.getElementById('numero_serie');
-    const immatInput = document.getElementById('immatriculation');
 
-    [serieInput, immatInput].forEach(input => {
-        input.addEventListener('blur', function() {
-            if (this.value.length < 3) {
-                showError(this, 'Trop court (min 3 caractères)');
-            } else {
-                clearError(this);
-            }
-        });
+    // Validation de la superficie
+    const superficieInput = document.getElementById('superficie');
+    superficieInput.addEventListener('blur', function() {
+        if (!this.value) {
+            showError(this, 'Ce champ est obligatoire');
+            return;
+        }
+       superficie = parseInt(this.value);
+        if (superficie < 10 || superficie > 1000) {
+            showError(this, 'La superficie doit être entre 10 et 1000 m²');
+        } else {
+            clearError(this);
+        }
+    });
+
+    // Validation du capital mobilier
+    const capitalInput = document.getElementById('capital_mobilier');
+    capitalInput.addEventListener('blur', function() {
+        if (!this.value) {
+            showError(this, 'Ce champ est obligatoire');
+            return;
+        }
+        const capital = parseFloat(this.value);
+        
+        if (capital < 0 || capital > 5000000) {
+            showError(this, 'Le capital doit être entre 0 et 5 000 000 DZD');
+        } else {
+            clearError(this);
+        }
+    });
+    // Validation du nombre de sinistres
+    const sinistresInput = document.getElementById('antecedents');
+    sinistresInput.addEventListener('blur', function() {
+        if (!this.value) {
+            showError(this, 'Ce champ est obligatoire');
+            return;
+        }
+        const nbSinistres = parseInt(this.value);
+        if (nbSinistres < 0 || nbSinistres > 20) {
+            showError(this, 'Nombre de sinistres invalide (0-20)');
+        } else {
+            clearError(this);
+        }
     });
     
     //Set les dates automatique et des Validation
@@ -143,9 +198,9 @@ document.addEventListener('DOMContentLoaded', function() {
     dateExpiration.value = new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]; // Date d'expiration par défaut à +1 an
     
     dateSubscription.addEventListener('change', function() {
-        const today = new Date();
+        today = new Date();
         today.setHours(0, 0, 0, 0);
-        const selectedDate = new Date(this.value);
+        selectedDate = new Date(this.value);
         
         if (selectedDate < today) {
             showError(this, 'La date de souscription ne peut pas être dans le passé');
@@ -153,55 +208,18 @@ document.addEventListener('DOMContentLoaded', function() {
             clearError(this);
             // Définir automatiquement la date d'expiration à +1 an
             if (this.value) {
-                const expirationDate = new Date(selectedDate);
+                 expirationDate = new Date(selectedDate);
                 expirationDate.setFullYear(expirationDate.getFullYear() + 1);
                 
                 // Format YYYY-MM-DD pour input date
-                const formattedDate = expirationDate.toISOString().split('T')[0];
+                 formattedDate = expirationDate.toISOString().split('T')[0];
                 dateExpiration.value = formattedDate;
-            }
-        }
-    });
-    
-    dateExpiration.addEventListener('change', function() {
-        if (dateSubscription.value) {
-            const subscriptionDate = new Date(dateSubscription.value);
-            const expirationDate = new Date(this.value);
-            
-            if (expirationDate <= subscriptionDate) {
-                showError(this, 'La date d\'expiration doit être postérieure à la date de souscription');
-            } else {
-                clearError(this);
-            }
-        }
-    });
-    
-    // Validation de l'expérience du conducteur par rapport à son âge
-    const experienceInput = document.getElementById('experience_conducteur');
-    experienceInput.addEventListener('input', function() {
-        if (dateNaissanceInput.value && this.value) {
-            const naissance = new Date(dateNaissanceInput.value);
-            const aujourdhui = new Date();
-            let age = aujourdhui.getFullYear() - naissance.getFullYear();
-            
-            // Ajustement si anniversaire pas encore passé
-            if (aujourdhui.getMonth() < naissance.getMonth() || 
-                (aujourdhui.getMonth() === naissance.getMonth() && aujourdhui.getDate() < naissance.getDate())) {
-                age--;
-            }
-
-            const experience = parseInt(this.value);
-            const experienceMax = age - 18;
-            
-            if (experience > experienceMax) {
-                showError(this, `L'expérience ne peut dépasser ${experienceMax} ans (âge: ${age} ans)`);
-            } else {
-                clearError(this);
             }
         }
     });
     document.getElementById('calculerPrimeBtn').addEventListener('click', async function() {
         isValide = true;        
+        
         requiredInputs.forEach(input => {
             if (!input.value.trim()) {
                 isValide = false;
@@ -211,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Vérifiez s'il y a des erreurs
         if (!isValide) {
-            alert('Veuillez corriger les erreurs avant de calculer');
+            swal.fire('Veuillez corriger les erreurs avant de calculer');
             return;
         }
     
@@ -221,11 +239,8 @@ document.addEventListener('DOMContentLoaded', function() {
         btnCalculer.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calcul en cours...';
     
         try {
-            // const formData = new FormData(document.getElementById('formPrim'));
-            // for (let [key, value] of formData.entries()) {
-            //     console.log(`${key}: ${value}`);
-            // }
-            const response = await fetch('calcul_prime_auto.php', {
+            const formData = new FormData(document.getElementById('formPrim'));
+            const response = await fetch('calcul_prime_habitation.php', {
                 method: 'POST',
                 body: formData
             });
@@ -259,15 +274,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Affichage des résultats
         detailDiv.innerHTML = `
-            <div class="prime-result">
-                <p>Prime Net: ${primeNet.toLocaleString('fr-FR')} DZD</p>
-                <p>Prime avec Surcharge: <strong>${primeAvecSurcharge.toLocaleString('fr-FR')} DZD</strong></p>
-                <p>Prime avec Réduction: <strong>${primeAvecReduction.toLocaleString('fr-FR')} DZD</strong></p>
-                <p>Prime annuelle: <strong>${prime.toLocaleString('fr-FR')} DZD</strong></p>
-                <p>Date d'effet: ${document.getElementById('date_souscription').value}</p>
-                <p>Date d'expiration: ${document.getElementById('date_expiration').value}</p>
-            </div>
-        `;
+        <div class="prime-result">
+            <h3>Détails de la prime</h3>
+            <p>Prime de base: ${primeNet.toLocaleString('fr-FR')} DZD</p>
+            <p>Prime ajustée: ${prime.toLocaleString('fr-FR')} DZD</p>
+            <p>Validité: Du ${document.getElementById('date_souscription').value} au ${document.getElementById('date_expiration').value}</p>
+            <p>Superficie assurée: ${document.getElementById('superficie').value} m²</p>
+            <p>Capital mobilier: ${document.getElementById('capital_mobilier').value} DZD</p>
+        </div>
+    `;
         resultatDiv.style.display = 'block';
     }
 
@@ -386,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 inputRecherche.value = '';
                 
                 // Focus sur le champ suivant
-                document.getElementById('marque_vehicule').focus();
+                document.getElementById('statut_logement').focus();
             }
         });
         
@@ -398,31 +413,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         });
         
-     
-        //Gestion les Types des Marque
-        const marqueSelect = document.getElementById('marque_vehicule');
-        const typeSelect = document.getElementById('type_vehicule');
-        
-        const typesParMarque = {
-            'renault': ['Clio', 'Megane', 'Kadjar'],
-            'peugeot': ['208', '308', '3008'],
-            'citroen': ['C3', 'C4', 'C5 Aircross'],
-            'volkswagen': ['Golf', 'Passat', 'Tiguan'],
-            'bmw': ['Série 1', 'Série 3', 'X3']
-        };
-        
-        marqueSelect.addEventListener('change', function() {
-            const marque = this.value;
-            typeSelect.innerHTML = '<option value="">-- Sélectionnez --</option>';
-            
-            if(marque && typesParMarque[marque]) {
-                typesParMarque[marque].forEach(type => {
-                    const option = document.createElement('option');
-                    option.value = type;
-                    option.textContent = type;
-                    typeSelect.appendChild(option);
-                });
-            }
-        });
 });
 

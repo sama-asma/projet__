@@ -107,6 +107,53 @@ if (!isset($_SESSION['user_id'])) {
                         </select>
                     </div>
                 </div>
+<!--                 
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wilaya" class="required">Wilaya</label>
+                        <select id="wilaya" name="wilaya" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="16">Alger</option>
+                            <option value="31">Oran</option>
+                            <option value="19">Sétif</option>
+                            < Ajoutez les 48 wilayas -->
+                        <!-- </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="commune" class="required">Commune</label>
+                        <input type="text" id="commune" name="commune" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adresse_detail" class="required">Adresse détaillée</label>
+                    <input type="text" id="adresse_detail" name="adresse_detail" required 
+                        placeholder="N°, Rue, Quartier">
+                </div> --> 
+                <div class="form-row">
+                <div class="form-group">
+                    <label for="wilaya" class="required">Wilaya</label>
+                    <select id="wilaya" name="wilaya" required>
+                        <option value="">-- Sélectionnez --</option>
+                        <!-- Rempli dynamiquement par JavaScript -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="commune" class="required">Commune</label>
+                    <select id="commune" name="commune" required disabled>
+                        <option value="">-- Sélectionnez d'abord une wilaya --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="adresse_detail" class="required">Adresse détaillée</label>
+                <input type="text" id="adresse_detail" name="adresse_detail" required 
+                    placeholder="N°, Rue, Quartier">
+            </div>
+           
                 <div class="form-row">
                     <div class="form-group">
                         <label for="superficie" class="required">Superficie (m²)</label>
@@ -114,7 +161,7 @@ if (!isset($_SESSION['user_id'])) {
                     </div>
                     <div class="form-group">
                         <label for="annee_construction" class="required">Année de construction</label>
-                        <input type="number" id="annee_construction" name="annee_construction" min="1800" max="<?= date('Y'); ?>" required>
+                        <input type="number" id="annee_construction" name="annee_construction" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -163,7 +210,7 @@ if (!isset($_SESSION['user_id'])) {
                         <input type="number" id="nb_occupants" name="nb_occupants" min="1" required>
                     </div>
                     <div class="form-group">
-                        <label for="capital_mobilier" class="required">Capital mobilier assuré (€)</label>
+                        <label for="capital_mobilier" class="required">Capital mobilier assuré (DZD)</label>
                         <input type="number" id="capital_mobilier" name="capital_mobilier" min="0" required>
                     </div>
                 </div>
@@ -210,7 +257,7 @@ if (!isset($_SESSION['user_id'])) {
                         <input type="number" name="reduction" id="reduction" min="0" max="50">
                     </div>
                     <div class="form-group">
-                        <label for="surcharge">Surcharge: (En %)</label>
+                        <label for="surcharge" class="required">Surcharge: (En %)</label>
                         <input type="number" name="surcharge" id="surcharge" required >
                     </div>
                 </div>
