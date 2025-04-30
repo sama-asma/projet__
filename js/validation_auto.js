@@ -221,10 +221,6 @@ document.addEventListener('DOMContentLoaded', function() {
         btnCalculer.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calcul en cours...';
     
         try {
-            // const formData = new FormData(document.getElementById('formPrim'));
-            // for (let [key, value] of formData.entries()) {
-            //     console.log(`${key}: ${value}`);
-            // }
             const response = await fetch('calcul_prime_auto.php', {
                 method: 'POST',
                 body: formData

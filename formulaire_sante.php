@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assurance habitation</title>
+    <title>Assurance santé</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="img/logo.png" type="image/png">
     <!-- Include SweetAlert2 CSS -->
@@ -36,8 +36,8 @@ if (!isset($_SESSION['user_id'])) {
                 <?php unset($_SESSION['form_errors']); ?>
             </div>
         <?php endif; ?>
-        <form id="formPrim" method="POST" action="traitement_habitation.php" novalidate> <!-- novalidate: désactiver validation html -->
-            <h1>Souscription Assurance Habitation</h1>
+        <form id="formPrim" method="POST" action="traitement_sante.php" novalidate>
+            <h1>Souscription Assurance Santé</h1>
             
             <!-- Recherche client existant -->
             <div class="form-section">
@@ -86,84 +86,17 @@ if (!isset($_SESSION['user_id'])) {
                 </div>
             </div>
 
-            <!-- Informations sur le logement -->
+            <!-- Informations santé -->
             <div class="form-section">
-                <h2>Informations du Logement</h2>
+                <h2>Informations Santé</h2>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="statut_logement" class="required">Statut du logement</label>
-                        <select id="statut_logement" name="statut_logement" required>
-                            <option value="">-- Sélectionnez --</option>
-                            <option value="proprietaire">Propriétaire</option>
-                            <option value="locataire">Locataire</option>
-                        </select>
+                        <label for="profession" class="required">Profession</label>
+                        <input type="text" id="profession" name="profession" required>
                     </div>
                     <div class="form-group">
-                        <label for="type_logement" class="required">Type de logement</label>
-                        <select id="type_logement" name="type_logement" required>
-                            <option value="">-- Sélectionnez --</option>
-                            <option value="maison">Maison</option>
-                            <option value="appartement">Appartement</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                <div class="form-group">
-                    <label for="wilaya" class="required">Wilaya</label>
-                    <select id="wilaya" name="wilaya" required>
-                        <option value="">-- Sélectionnez --</option>
-                        <!-- Rempli dynamiquement par JavaScript -->
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="commune" class="required">Commune</label>
-                    <select id="commune" name="commune" required disabled>
-                        <option value="">-- Sélectionnez d'abord une wilaya --</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="adresse_detail" class="required">Adresse détaillée</label>
-                <input type="text" id="adresse_detail" name="adresse_detail" required 
-                    placeholder="N°, Rue, Quartier">
-            </div>
-           
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="superficie" class="required">Superficie (m²)</label>
-                        <input type="number" id="superficie" name="superficie" min="10" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="annee_construction" class="required">Année de construction</label>
-                        <input type="number" id="annee_construction" name="annee_construction" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="localisation" class="required">Localisation</label>
-                        <select id="localisation" name="localisation" required>
-                            <option value="">-- Sélectionnez --</option>
-                            <option value="urbain">Zone urbaine</option>
-                            <option value="rural">Zone rurale</option>
-                            <option value="risque">Zone à risque</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="materiaux" class="required">Matériaux de construction</label>
-                        <select id="materiaux" name="materiaux" required>
-                            <option value="">-- Sélectionnez --</option>
-                            <option value="resistant">Matériaux résistants</option>
-                            <option value="standard">Matériaux standards</option>
-                            <option value="fragile">Matériaux fragiles</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="etat_toiture" class="required">État de la toiture</label>
-                        <select id="etat_toiture" name="etat_toiture" required>
+                        <label for="etat_sante" class="required">État de santé</label>
+                        <select id="etat_sante" name="etat_sante" required>
                             <option value="">-- Sélectionnez --</option>
                             <option value="excellent">Excellent</option>
                             <option value="bon">Bon</option>
@@ -171,70 +104,57 @@ if (!isset($_SESSION['user_id'])) {
                             <option value="mauvais">Mauvais</option>
                         </select>
                     </div>
+                </div>
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="occupation" class="required">Occupation</label>
-                        <select id="occupation" name="occupation" required>
-                            <option value="">-- Sélectionnez --</option>
-                            <option value="principale">Résidence principale</option>
-                            <option value="secondaire">Résidence secondaire</option>
+                        <label for="poids" class="required">Poids (kg)</label>
+                        <input type="number" id="poids" name="poids" min="30" max="300" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taille" class="required">Taille (cm)</label>
+                        <input type="number" id="taille" name="taille" min="100" max="250" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                            <label for="sexe" class="required">Sexe</label>
+                            <select id="sexe" name="sexe" required>
+                                <option value="">-- Sélectionnez --</option>
+                                <option value="homme">Homme</option>
+                                <option value="femme">Femme</option>
+                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="antecedents">Antécédents médicaux</label>
+                        <textarea id="antecedents" name="antecedents" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fumeur">Fumeur</label>
+                        <select id="fumeur" name="fumeur">
+                            <option value="non">Non</option>
+                            <option value="occasionnel">Occasionnel</option>
+                            <option value="regulier">Régulier</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
-                        <label for="nb_occupants" class="required">Nombre d'occupants</label>
-                        <input type="number" id="nb_occupants" name="nb_occupants" min="1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="capital_mobilier" class="required">Capital mobilier assuré (DZD)</label>
-                        <input type="number" id="capital_mobilier" name="capital_mobilier" min="0" required>
+                        <label for="nb_personnes">Nombre de personnes à couvrir</label>
+                        <input type="number" id="nb_personnes" name="nb_personnes" min="1" value="1">
                     </div>
                 </div>
-            </div>
-
-            <!-- Mesures de sécurité -->
-            <div class="form-section">
-                <h2>Mesures de Sécurité</h2>
-                <div class="form-row">
-                    <div class="form-group checkbox-group">
-                        <label>Systèmes de sécurité installés</label>
-                        <div>
-                            <input type="checkbox" id="alarme" name="securite[]" value="alarme">
-                            <label for="alarme">Alarme</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="detecteur_fumee" name="securite[]" value="detecteur_fumee">
-                            <label for="detecteur_fumee">Détecteur de fumée</label>
-                        </div>
-                        <div>
-                            <input type="checkbox" id="surveillance" name="securite[]" value="surveillance">
-                            <label for="surveillance">Système de surveillance</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Antécédents d'assurance -->
-            <div class="form-section">
-                <h2>Antécédents d'Assurance</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="antecedents" class="required">Nombre de sinistres déclarés (5 dernières années)</label>
-                        <input type="number" id="antecedents" name="antecedents" min="0" required>
-                    </div>
-                </div>
-            </div>
+</div>
 
             <!-- Réductions et surcharges -->
             <div class="form-section">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="reduction">Réduction: (En %)</label>
-                        <input type="number" name="reduction" id="reduction" min="0" max="50">
+                        <input type="number" name="reduction" id="reduction">
                     </div>
                     <div class="form-group">
                         <label for="surcharge" class="required">Surcharge: (En %)</label>
-                        <input type="number" name="surcharge" id="surcharge" required >
+                        <input type="number" name="surcharge" id="surcharge" required>
                     </div>
                 </div>
             </div>
@@ -246,11 +166,10 @@ if (!isset($_SESSION['user_id'])) {
                     <label for="id_garantie" class="required">Type de garantie</label>
                     <?php
                         require 'db.php';
-                        // Récupération des garanties depuis la base de données
-                        $query = "SELECT id_garantie, type_assurance, nom_garantie, description FROM garanties WHERE type_assurance = 'habitation'";
+                        // Récupération des garanties santé depuis la base de données
+                        $query = "SELECT id_garantie, type_assurance, nom_garantie, description FROM garanties WHERE type_assurance = 'sante'";
                         $result = $conn->query($query);
 
-                        // Vérifier si des données existent
                         $garanties = [];
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
@@ -263,7 +182,7 @@ if (!isset($_SESSION['user_id'])) {
                             <option value="">-- Sélectionnez --</option>
                             <?php foreach ($garanties as $garantie) : ?>
                                 <option value="<?= (string)htmlspecialchars($garantie['id_garantie']) ?>">
-                                    <?= htmlspecialchars($garantie['nom_garantie'] ) ?> - 
+                                    <?= htmlspecialchars($garantie['nom_garantie']) ?> - 
                                     <?= htmlspecialchars($garantie['description']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -302,7 +221,7 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <script src="js/validation_habitation.js"></script> 
+    <script src="js/validation_sante.js"></script> 
     <script src="js/script.js"></script> 
     <!-- Include SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

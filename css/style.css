@@ -477,6 +477,41 @@ button.generate:hover {
   color: #2c3e50;
 }
 
+.beneficiaires-container {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.beneficiaire-item {
+  padding: 8px;
+  margin: 5px 0;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+}
+
+.supprimer-beneficiaire {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.ajout-beneficiaire {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.beneficiaire-input {
+  padding: 8px;
+  flex: 1;
+  min-width: 120px;
+}
+
 .form-row {
   display: flex;
   gap: 15px;

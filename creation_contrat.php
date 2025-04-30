@@ -37,11 +37,11 @@ if (!isset($_SESSION['user_id'])) {
                     <i class="fas fa-user-shield"></i>  Assurance individu
                 </button>
                 <div id="individu-options">
-                    <button class="vie">
+                    <button class="vie" onclick="window.location.href='formulaire_vie.php'" >
                         <i class="fas fa-heartbeat"></i> Vie
                     </button>
-                    <button class="sante">
-                        <i class="fas fa-stethoscope"></i> Santé
+                    <button class="sante" onclick="window.location.href='formulaire_sante.php'" >
+                        <i class="fas fa-stethoscope" ></i> Santé
                     </button>
                     <button class="scolarite" onclick="window.location.href='formulaire_scolarite.php'">
                         <i class="fas fa-graduation-cap"></i> Scolarité

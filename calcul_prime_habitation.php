@@ -33,7 +33,7 @@ $errors = [];
 if ($data['superficie'] < 10 || $data['superficie'] > 1000) $errors[] = "Superficie invalide (10-1000 m²)";
 if ($data['capital_mobilier'] < 0 || $data['capital_mobilier'] > 5000000) $errors[] = "Capital mobilier invalide";
 if ($data['antecedents'] < 0 || $data['antecedents'] > 20) $errors[] = "Nombre de sinistres antérieurs invalide";
-if (empty($data['wilaya_code']) $errors[] = "Wilaya requise";
+if (empty($data['wilaya_code'])) $errors[] = "Wilaya requise";
 
 if (!empty($errors)) {
     echo json_encode(['success' => false, 'message' => implode(', ', $errors)]);
@@ -86,27 +86,34 @@ $facteurs = [
         'alarme' => 0.9,
         'detecteur_fumee' => 0.95,
         'surveillance' => 0.85
+    ],
+    'nb_occupants' => [
+        '1-2' => 1.0,
+        '3-4' => 1.1,
+        '5+' => 1.25
     ]
+
 ];
 
 // Calcul des coefficients
-$coef_type = $facteurs['type_logement'][$data['type_logement']] ?? null;
-$coef_materiaux = $facteurs['materiaux'][$data['materiaux']] ?? null;
-$coef_toiture = $facteurs['etat_toiture'][$data['etat_toiture']] ?? null;
-$coef_statut = $facteurs['statut_occupation'][$data['statut_occupation']] ?? null;
-$coef_localisation = $facteurs['localisation'][$data['localisation']] ?? null;
+$coef_type = $facteurs['type_logement'][$data['type_logement']] ?? 1.0;
+$coef_materiaux = $facteurs['materiaux'][$data['materiaux']] ?? 1.0;
+$coef_toiture = $facteurs['etat_toiture'][$data['etat_toiture']] ?? 1.0;
+$coef_statut = $facteurs['statut_occupation'][$data['statut_occupation']] ?? 1.0;
+$coef_localisation = $facteurs['localisation'][$data['localisation']] ?? 1.0;
+$coef_occupants = $facteurs['nb_occupants'][$data['nb_occupants']] ?? 1.0;
 
 // Calcul sécurité (multiplicatif)
 $coef_securite = 1.0;
 foreach ($data['securite'] as $securite) {
-    $coef_securite *= $facteurs['securite'][$securite] ?? null;
+    $coef_securite *= $facteurs['securite'][$securite] ?? 1.0;
 }
 
 // Calcul superficie (non linéaire)
 $coef_superficie = min(1.0 + ($data['superficie'] / 200), 2.5);
 
 // Calcul capital mobilier
-$coef_capital = min(1.0 + ($data['capital_mobilier'] / 1000000), 3.0);
+$coef_capital = min(1.0 + ($data['capital_mobilier'] / 5000000), 3.0);
 
 // Calcul sinistres antérieurs
 $coef_sinistres = 1.0 + ($data['antecedents'] * 0.1);
@@ -121,7 +128,8 @@ $primeNet = $primeBase
     * $coef_securite
     * $coef_superficie
     * $coef_capital
-    * $coef_sinistres;
+    * $coef_sinistres
+    * $coef_occupants;
 
 // Application réductions/surcharges
 $prime = $primeNet * (1 - $data['reduction']/100) * (1 + $data['surcharge']/100);

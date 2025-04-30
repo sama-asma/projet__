@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
         detailDiv.innerHTML = `
         <div class="prime-result">
             <h3>Détails de la prime</h3>
-            <p>Prime de base: ${primeNet.toLocaleString('fr-FR')} DZD</p>
+            <p>Prime Net: ${primeNet.toLocaleString('fr-FR')} DZD</p>
             <p>Prime ajustée: ${prime.toLocaleString('fr-FR')} DZD</p>
             <p>Validité: Du ${document.getElementById('date_souscription').value} au ${document.getElementById('date_expiration').value}</p>
             <p>Superficie assurée: ${document.getElementById('superficie').value} m²</p>
