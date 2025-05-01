@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Variables globales
     let wilayasData = [];
     let communesData = [];
-
+    let wilayaCode;
     // Chargement des données
     async function loadGeoData() {
         try {
@@ -93,41 +93,48 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Erreur de chargement des données:", error);
         }
     }
-
-    // Remplir la liste des wilayas
+    
+   // Remplir la liste des wilayas
     function remplirWilayas() {
         const wilayaSelect = document.getElementById('wilaya');
+        wilayaSelect.innerHTML = '<option value="">-- Sélectionnez --</option>';
         
         wilayasData.forEach(wilaya => {
             const option = document.createElement('option');
-            option.value = wilaya.code;
-            option.textContent = wilaya.nom; 
+            option.value = wilaya.nom; // Stocke le NOM dans value (pour la BDD)
+            option.textContent = wilaya.nom;
+            option.dataset.code = wilaya.code; // Stocke le CODE en data attribute
             wilayaSelect.appendChild(option);
         });
     }
-      // Appel de la fonction pour charger les données
-      loadGeoData();
-
+    loadGeoData();
     // Gestion du changement de wilaya
     document.getElementById('wilaya').addEventListener('change', function() {
-        const wilayaCode = this.value;
-        const communeSelect = document.getElementById('commune');
+        const selectedOption = this.options[this.selectedIndex];
+        const wilayaCode = selectedOption.dataset.code; // Récupère le CODE depuis data attribute
+        const wilayaNom = selectedOption.value; // Récupère le NOM
         
-        // Réinitialiser
+        const communeSelect = document.getElementById('commune');
         communeSelect.innerHTML = '<option value="">-- Sélectionnez --</option>';
         communeSelect.disabled = !wilayaCode;
         
         if (wilayaCode) {
-            // Filtrer les communes par wilaya
-            const communes = communesData.filter(commune => commune.wilaya_id === wilayaCode);
+            // Filtrer les communes par code de wilaya
+            const communes = communesData.filter(commune => commune.wilaya_id == wilayaCode);
             
             communes.forEach(commune => {
                 const option = document.createElement('option');
-                option.value = commune.id;
-                option.textContent = commune.nom; 
+                option.value = commune.nom; // Stocke le NOM dans value (pour la BDD)
+                option.textContent = commune.nom;
+                option.dataset.code = commune.code; // Stocke le CODE en data attribute
                 communeSelect.appendChild(option);
             });
         }
+        
+        console.log("Wilaya sélectionnée:", {
+            nom: wilayaNom, 
+            code: wilayaCode
+        });
     });
     // la validation de  l'année de construction
     const anneeConstructionInput = document.getElementById('annee_construction');

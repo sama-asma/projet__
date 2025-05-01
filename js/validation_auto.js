@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+// document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('formPrim');
     let isValide = true;
 
@@ -122,19 +122,83 @@ document.addEventListener('DOMContentLoaded', function() {
             clearError(this);
         }
     });
-    // Validation numéro de série et immatriculation
-    const serieInput = document.getElementById('numero_serie');
-    const immatInput = document.getElementById('immatriculation');
-
-    [serieInput, immatInput].forEach(input => {
-        input.addEventListener('blur', function() {
+    // Validation numéro de série 
+    document.getElementById('numero_serie').addEventListener('blur', function() {
             if (this.value.length < 3) {
                 showError(this, 'Trop court (min 3 caractères)');
             } else {
                 clearError(this);
             }
         });
+    // });
+  
+    // Validation pour l'immatriculation algérienne
+    const immatInput = document.getElementById('immatriculation');
+    immatInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        
+        // Expression régulière pour le format algérien : 12345-321-16 ou 123456-321-16
+        // - 5 ou 6 chiffres (numéro de dossier)
+        // - 3 chiffres (type + année)
+        // - 2 chiffres (wilaya)
+        const algerianPlateRegex = /^(\d{5,6})-(\d{3})-(\d{2})$/;
+        
+        if (!value) {
+            showError(this, 'Ce champ est obligatoire');
+        } else if (!algerianPlateRegex.test(value) || value.length !== 13) {
+            showError(this, 'Format invalide. Format attendu : 12345-321-16' );
+        } else {
+            // Validation supplémentaire des composants
+            const matches = value.match(algerianPlateRegex);
+            const typeVehicule = matches[2][0]; // Premier chiffre du deuxième groupe
+            const anneeCirculation = matches[2].substring(1); // Deux derniers chiffres du deuxième groupe
+            const wilaya = matches[3]; // Troisième groupe
+            
+            const currentYearLastTwoDigits = new Date().getFullYear() % 100;
+            const errors = [];
+            
+            // Validation du type de véhicule (1-9)
+            if (typeVehicule < '1' || typeVehicule > '9') {
+                errors.push('Le type de véhicule doit être entre 1 et 9');
+            }
+            
+            // Validation de l'année (00 à année en cours)
+            if (parseInt(anneeCirculation) > currentYearLastTwoDigits) {
+                errors.push(`L'année de circulation ne peut pas dépasser ${currentYearLastTwoDigits}`);
+            }
+            
+            // Validation de la wilaya (01-58)
+            if (parseInt(wilaya) < 1 || parseInt(wilaya) > 58) {
+                errors.push('La wilaya doit être entre 01 et 58');
+            }
+            
+            if (errors.length > 0) {
+                showError(this, errors.join('<br>'));
+            } else {
+                clearError(this);
+            }
+        }
     });
+
+    // Permettre aussi la saisie sans tirets mais ajouter automatiquement les tirets
+    immatInput.addEventListener('input', function() {
+        let value = this.value.replace(/\D/g, ''); // Supprimer tout ce qui n'est pas un chiffre
+        
+        if (value.length > 6) {
+            // Après 6 chiffres, ajouter le premier tiret
+            value = value.substring(0, 6) + '-' + value.substring(6);
+        }
+        if (value.length > 10) {
+            // Après 3 chiffres suivants, ajouter le deuxième tiret
+            value = value.substring(0, 10) + '-' + value.substring(10);
+        }
+        if (value.length > 13) {
+            // Limiter à 13 caractères au total (6-3-2)
+            value = value.substring(0, 13);
+        }
+        
+        this.value = value;
+        });
     
     //Set les dates automatique et des Validation
     const dateSubscription = document.getElementById('date_souscription');
@@ -200,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    
     document.getElementById('calculerPrimeBtn').addEventListener('click', async function() {
         isValide = true;        
         requiredInputs.forEach(input => {
@@ -221,6 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btnCalculer.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calcul en cours...';
     
         try {
+            const formData = new FormData(document.getElementById('formPrim'));
             const response = await fetch('calcul_prime_auto.php', {
                 method: 'POST',
                 body: formData
@@ -420,5 +486,4 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         });
-});
 

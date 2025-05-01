@@ -94,7 +94,7 @@ if (!isset($_SESSION['user_id'])) {
                         <label for="statut_logement" class="required">Statut du logement</label>
                         <select id="statut_logement" name="statut_logement" required>
                             <option value="">-- Sélectionnez --</option>
-                            <option value="proprietaire">Propriétaire</option>
+                            <option value="propriétaire">Propriétaire</option>
                             <option value="locataire">Locataire</option>
                         </select>
                     </div>
@@ -165,7 +165,7 @@ if (!isset($_SESSION['user_id'])) {
                         <label for="etat_toiture" class="required">État de la toiture</label>
                         <select id="etat_toiture" name="etat_toiture" required>
                             <option value="">-- Sélectionnez --</option>
-                            <option value="excellent">Excellent</option>
+                            <option value="neuf">Neuf</option>
                             <option value="bon">Bon</option>
                             <option value="moyen">Moyen</option>
                             <option value="mauvais">Mauvais</option>

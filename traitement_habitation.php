@@ -28,15 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $wilaya = $_POST['wilaya'] ?? null;
     $commune = $_POST['commune'] ?? null;
     $adresse_detail = $_POST['adresse_detail'] ?? null;
-    $superficie = $_POST['superficie'] ?? null;
-    $annee_construction = $_POST['annee_construction'] ?? null;
+    $superficie = (float)$_POST['superficie'];
+    $annee_construction = (int)$_POST['annee_construction'];
+    $capital_mobilier = (float)$_POST['capital_mobilier'];
+    $nb_occupants = (int)$_POST['nb_occupants'];
+    $antecedents = (int)$_POST['antecedents'];
     $localisation = $_POST['localisation'] ?? null;
     $materiaux = $_POST['materiaux'] ?? null;
     $etat_toiture = $_POST['etat_toiture'] ?? null;
     $occupation = $_POST['occupation'] ?? null;
-    $nb_occupants = $_POST['nb_occupants'] ?? null;
-    $capital_mobilier = $_POST['capital_mobilier'] ?? null;
-    $antecedents = $_POST['antecedents'] ?? null;
     $securite = isset($_POST['securite']) ? implode(',', $_POST['securite']) : '';
 
     // Validation des données
@@ -143,27 +143,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("sisssdd", $numero_contrat, $client_id, $date_souscription, 
                          $date_expiration, $prime, $reduction, $surcharge);
         if (!$stmt->execute()) {
-            throw new Exception("Erreur lors de la création du contrat");
+            throw new Exception("Erreur lors de la création du contrat habitation");
         } 
         $contrat_id = $stmt->insert_id;
         $stmt->close();
 
         // Insertion des détails spécifiques à l'habitation
-        $stmt = $conn->prepare("INSERT INTO assurance_habitation (
-            id_contrat, id_garantie, statut_logement, type_logement, wilaya_code, commune_code,
-            adresse_detail, superficie, annee_construction, localisation, materiaux,
-            etat_toiture, occupation, nb_occupants, capital_mobilier, antecedents,
-            mesures_securite
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO assurance_habitation  (
+            id_contrat, id_garantie, statut, type_logement, superficie, localisation, 
+            annee_construction, etat_toiture, materiaux_construction, occupation, capital_mobilier, 
+            wilaya_nom, commune_nom, adresse_detail, nb_occupants, mesures_securite, antecedents
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
-        $stmt->bind_param("iisssssissssssiis", 
-            $contrat_id, $id_garantie, $statut_logement, $type_logement, $wilaya, $commune,
-            $adresse_detail, $superficie, $annee_construction, $localisation, $materiaux,
-            $etat_toiture, $occupation, $nb_occupants, $capital_mobilier, $antecedents, $securite);
+        $stmt->bind_param(
+            "iissdsisssdsssisi", 
+            $contrat_id, $id_garantie, $statut_logement, $type_logement, $superficie, 
+            $localisation, $annee_construction, $etat_toiture, $materiaux, $occupation,
+            $capital_mobilier, $wilaya, $commune, $adresse_detail, $nb_occupants, $securite, $antecedents
+        );
         
         if (!$stmt->execute()) {
-            throw new Exception("Erreur lors de la création du contrat habitation");
+            throw new Exception("Erreur lors de la création du  détaill contrat habitation");
         } 
+        $stmt->close();
 
         echo <<<HTML
         <!DOCTYPE html>
@@ -186,13 +188,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         HTML;
         exit();
     } catch (Exception $e) {
-        $_SESSION['error'] = "Erreur technique: " . $e->getMessage();
+        error_log("ERREUR COMPLÈTE: " . $e->getMessage());
+        $_SESSION['error'] = "Erreur technique détaillée: " . $e->getMessage();
+        // Affichez aussi l'erreur SQL si existe
+        if (isset($stmt) && $stmt->error) {
+            $_SESSION['error'] .= "<br>Erreur SQL: " . $stmt->error;
+        }
         header('Location: formulaire_habitation.php');
         exit();
     }
 } else {  
     // Si le formulaire n'a pas été soumis, rediriger vers le formulaire
-    header('Location: formulaire_habitation.php');
+    header('Location: formulaire_sante.php');
     exit();
 }
 ?>

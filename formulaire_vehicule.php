@@ -114,7 +114,7 @@ if (!isset($_SESSION['user_id'])) {
                         </div>
                         <div class="form-group">
                             <label for="immatriculation" class="required">Immatriculation</label>
-                            <input type="text" id="immatriculation" name="immatriculation" required>
+                            <input type="text" id="immatriculation" name="immatriculation"  placeholder="Ex: 12345-321-16 (5-3-2 chiffres)" required>
                         </div>
                     </div>
                     <div class="form-row">

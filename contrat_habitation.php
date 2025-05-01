@@ -10,8 +10,8 @@ class ContratHabitationAssurance extends ContratPDF {
     // Afficher les caractéristiques du logement
     public function addDetailsLogement($statut, $type, $superficie, $annee, $localisation, $materiaux, $etat_toiture, $occupation, $nb_occupants, $capital_mobilier) {
         $this->SectionTitle('CARACTÉRISTIQUES DU LOGEMENT');
-        
-        $this->SetFont('Arial', '', 10);
+
+        $this->SetFont('', '', 10);
         $this->InfoLineDouble('Statut:', $statut, 'Type:', $type);
         $this->InfoLineDouble('Superficie:', $superficie . ' m²', 'Année construction:', $annee);
         $this->InfoLineDouble('Localisation:', $localisation, 'Matériaux:', $materiaux);
@@ -24,17 +24,17 @@ class ContratHabitationAssurance extends ContratPDF {
     // Afficher les garanties spécifiques habitation
     public function addGarantiesHabitation($formuleNom, $description, $franchise) {
         $this->SectionTitle('FORMULE ET GARANTIES INCLUSES');
-        $this->SetFont('Arial', 'B', 11);
+        $this->SetFont('DejaVu', 'B', 11);
         $this->Cell(0, 6, 'Formule : ' . $formuleNom, 0, 1);
         $this->Ln(5);
-        $this->SetFont('Arial', 'B', 10);
+        $this->SetFont('DejaVu', 'B', 10);
         $this->Cell(0, 6, 'Franchise : ' . $franchise, 0, 1);
         $this->Ln(5);
         
         // Afficher les garanties sous forme de liste
-        $this->SetFont('Arial', 'B', 11);
+        $this->SetFont('DejaVu', 'B', 11);
         $this->Cell(0, 6, 'Garanties incluses :', 0, 1);
-        $this->SetFont('Arial', '', 10);
+        $this->SetFont('DejaVu', '', 10);
         
         // Découper et afficher les garanties
         $garanties = explode(',', $description);
@@ -100,7 +100,7 @@ try {
     $coefficients = [
         'Coefficient Âge logement' => ($age_logement < 5) ? 0.9 : (($age_logement > 30) ? 1.3 : 1.0),
         'Coefficient Localisation' => ($contrat['localisation'] == 'urbain') ? 1.2 : (($contrat['localisation'] == 'rural') ? 0.9 : 1.5),
-        'Coefficient Matériaux' => ($contrat['materiaux'] == 'resistant') ? 0.8 : (($contrat['materiaux'] == 'standard') ? 1.0 : 1.4),
+        'Coefficient Matériaux' => ($contrat['materiaux_construction'] == 'resistant') ? 0.8 : (($contrat['materiaux_construction'] == 'standard') ? 1.0 : 1.4),
         'Coefficient Toiture' => ($contrat['etat_toiture'] == 'excellent') ? 0.8 : (($contrat['etat_toiture'] == 'bon') ? 1.0 : (($contrat['etat_toiture'] == 'moyen') ? 1.2 : 1.5)),
         'Coefficient Occupation' => ($contrat['occupation'] == 'principale') ? 1.0 : 1.3,
         'Coefficient Sécurité' => (!empty($contrat['mesures_securite'])) ? 0.9 : 1.1,
@@ -131,19 +131,19 @@ try {
     
     // Adresse du logement
     $pdf->SectionTitle('ADRESSE DU LOGEMENT');
-    $pdf->InfoLine('Wilaya :', $contrat['wilaya']);
-    $pdf->InfoLine('Commune :', $contrat['commune']);
+    $pdf->InfoLine('Wilaya :', $contrat['wilaya_nom']);
+    $pdf->InfoLine('Commune :', $contrat['commune_nom']);
     $pdf->InfoLine('Adresse :', $contrat['adresse_detail']);
     $pdf->Ln(5);
     
     // Détails du logement
     $pdf->addDetailsLogement(
-        $contrat['statut_logement'],
+        $contrat['statut'],
         $contrat['type_logement'],
         $contrat['superficie'],
         $contrat['annee_construction'],
         $contrat['localisation'],
-        $contrat['materiaux'],
+        $contrat['materiaux_construction'],
         $contrat['etat_toiture'],
         $contrat['occupation'],
         $contrat['nb_occupants'],
@@ -169,7 +169,7 @@ try {
     // Mesures de sécurité
     if (!empty($contrat['mesures_securite'])) {
         $pdf->SectionTitle('MESURES DE SÉCURITÉ');
-        $pdf->SetFont('Arial', '', 10);
+        $pdf->SetFont('DejaVu', '', 10);
         $mesures = explode(',', $contrat['mesures_securite']);
         foreach ($mesures as $mesure) {
             $pdf->Cell(10);
@@ -181,7 +181,7 @@ try {
     
     // Signatures
     $pdf->AddSignatureBlock();
-    $pdf->SetTitle($pdf->customUtf8Decode('Contrat d\'assurance habitation'));
+    $pdf->SetTitle('Contrat d\'assurance habitation');
     $pdf->Output('Contrat_' . $contrat['numero_contrat'] . '.pdf', 'I');
     
 } catch (Exception $e) {

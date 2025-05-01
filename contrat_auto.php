@@ -12,16 +12,19 @@ class ContratAutoAssurance extends ContratPDF {
     
     public function addGarantiesAuto($formuleNom,$description,$franchise) {
         $this->SectionTitle('FORMULE ET GARANTIES INCLUSES');
-        $this->SetFont('Arial', 'B', 11);
+        $this->SetFont('DejaVu', 'B', 11);
         $this->Cell(0, 6, 'Formule : ' . $formuleNom, 0, 1);
         $this->Ln(5);
-        $this->SetFont('Arial', 'B', 10);
-        $this->Cell(0, 6, 'Franchise : ' . $franchise, 0, 1);
+        $this->SetFont('DejaVu', 'B', 10);
+        $this->Cell(0, 6, 'Franchise : ' . $franchise . '%', 0, 1); 
+        // Ajout de la phrase après la franchise
+        $this->SetFont('DejaVu', '', 10);
+        $this->MultiCell(0, 6,'La franchise correspond au montant à la charge du souscripteur en cas de sinistre.');
         $this->Ln(5);
          // Afficher les garanties sous forme de liste
-        $this->SetFont('Arial', 'B', 11);
+        $this->SetFont('DejaVu', 'B', 11);
         $this->Cell(0, 6, 'Garanties incluses :', 0, 1);
-        $this->SetFont('Arial', '', 10);
+        $this->SetFont('DejaVu', '', 10);
     
     // Découper et afficher les garanties
     $garanties = explode(',', $description);
@@ -30,14 +33,14 @@ class ContratAutoAssurance extends ContratPDF {
         $garantie = trim($garantie);
         if (!empty($garantie)) {
             $this->Cell(10); // Indentation
-            $this->Cell(5, 5, '•', 0, 0); // Puces
+            $this->Cell(5, 5, '-', 0, 0); // Puces
             $this->MultiCell(0, 5, $garantie);
         }
     }  
         $this->Ln(10);
     }  
 }
-    // Vérification de l'ID du contrat
+    // Vérification de l'ID du contra
         if (!isset($_GET['contrat']) || !is_numeric($_GET['contrat'])) {
             die("Numéro de contrat invalide.");
         }
@@ -188,7 +191,7 @@ class ContratAutoAssurance extends ContratPDF {
         
         // Signatures (méthode communes)
         $pdf->AddSignatureBlock();
-        $pdf->SetTitle($pdf->customUtf8Decode('Contrat d\'assurance véhicule'));
+        $pdf->SetTitle('Contrat d\'assurance véhicule');
         $pdf->Output('Contrat_' . $contrat['numero_contrat'] . '.pdf', 'I');
        
        ?>
